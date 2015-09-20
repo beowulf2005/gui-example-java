@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/data/jpa 
+		http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+	 http://www.springframework.org/schema/jdbc
+     http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+	<util:properties id="database" location="classpath:project.properties" />
+
+	<jpa:repositories base-package="cn.isoffice.teamwork.data.repository.**" repository-impl-postfix="CustomImpl"/>
+
+	<!-- JPA Entity Manager -->
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="packagesToScan" value="cn.isoffice.teamwork.data.entity" />
+
+		<property name="persistenceProvider">
+			<bean class="org.hibernate.ejb.HibernatePersistence" />
+		</property>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="#{database['DS.DBTYPE']}" />
+				<property name="showSql" value="#{database['hibernate.show_sql']}" />
+				<property name="generateDdl" value="#{database['hibernate.generateDDL']}" />
+				<property name="databasePlatform" value="#{database['hibernate.dialect']}" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap" ref="jpaPropertyMap" />
+	</bean>
+
+	<bean id="jpaPropertyMap" class="java.util.Properties">
+		<constructor-arg>
+			<props>
+				<prop key="hibernate.dialect">#{database['hibernate.dialect']}</prop>
+				<prop key="hibernate.default_schema">#{database['hibernate.default_schema']}</prop>
+				<prop key="hibernate.hbm2ddl.auto">#{database['hibernate.hbm2ddl']}</prop>
+				<prop key="hibernate.show_sql">#{database['hibernate.show_sql']}</prop>
+				<prop key="hibernate.format_sql">#{database['hibernate.format_sql']}</prop>
+				<prop key="hibernate.connection.release_mode">#{database['hibernate.release_mode']}</prop>
+				<prop key="hiberante.jdbc.batch_size">#{database['hibernate.batch_size']}</prop>
+				<prop key="hibernate.jdbc.use_streams_for_binary">#{database['hibernate.use_streams_for_binary']}
+				</prop>
+				<prop key="hibernate.max_fetch_depth">#{database['hibernate.max_fetch_size']}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">#{database['hibernate.use_second_level_cache']}
+				</prop>
+				<prop key="hibernate.cache.use_query_cache">#{database['hibernate.use_query_cache']}</prop>
+				<prop key="hibernate.cache.region.factory_class">#{database['hibernate.cacheFactory']}</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">#{database['hibernate.use_reflection_optimizer']}
+				</prop>
+				<prop key="hibernate.generate_statistics">#{database['hibernate.generate_statistics']}</prop>
+				<prop key="hibernate.ejb.naming_strategy">#{database['hibernate.ejb.naming_strategy']}</prop>
+			</props>
+		</constructor-arg>
+	</bean>
+
+	<!-- Transaction Manager -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- Datasource -->
+	<bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource">
+		<property name="jdbcUrl" value="#{database['DS.URL']}" />
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="username" value="#{database['DS.USER']}" />
+		<property name="password" value="#{database['DS.PASSWORD']}" />
+	</bean>
+	
+	<beans profile="test">
+		<jdbc:embedded-database id="dataSource" type="H2">
+		</jdbc:embedded-database>
+	</beans>
+
+</beans>

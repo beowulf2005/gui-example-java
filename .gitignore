@@ -1,0 +1,7 @@
+/target
+/.classpath
+/.project
+/.settings
+/gui-example-java.iml
+/.idea/
+/.pmd
