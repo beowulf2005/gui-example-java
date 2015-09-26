@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/data/mongo
 		http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
 	<!-- <util:properties location=""/> -->
-	<mongo:mongo host="java-test.soffice" port="27017" write-concern="MAJORITY"/>
+	<mongo:mongo host="java-test.mongodb" port="27017" write-concern="MAJORITY"/>
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg ref="mongo" />

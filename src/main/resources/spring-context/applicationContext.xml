@@ -24,7 +24,7 @@
 	<!-- <context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect" /> -->
 	<!-- </context:component-scan> -->
 
-	<context:component-scan base-package="cn.isoffice.teamwork">
+	<context:component-scan base-package="org.gui.example">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
